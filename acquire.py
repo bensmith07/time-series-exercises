@@ -157,6 +157,10 @@ def sales_data():
     return df
 
 def combine_heb_data(sales, items, stores):
+    '''
+    Combines sales, items, stores df's (in that order)
+    Returns combined df.
+    '''
     sales = sales.rename(columns={'item': 'item_id', 'store': 'store_id'})
     sales_items = items.merge(sales, on='item_id')
     stores_sales_items = sales_items.merge(stores, on='store_id')
@@ -171,7 +175,7 @@ def opsd_germany_data():
         print('Reading from local CSV...')
         # if so, return the local csv
         return pd.read_csv(filename)
-    # otherwise, pull the data from the api:
+    # otherwise, pull the data from the url:
     url = 'https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.csv'
     print('No local copy exists. Reading data from: ', url, '...')
     df = pd.read_csv(url)
