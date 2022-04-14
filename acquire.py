@@ -162,8 +162,8 @@ def combine_heb_data(sales, items, stores):
     Returns combined df.
     '''
     sales = sales.rename(columns={'item': 'item_id', 'store': 'store_id'})
-    sales_items = items.merge(sales, on='item_id')
-    stores_sales_items = sales_items.merge(stores, on='store_id')
+    sales_items = items.merge(sales, on='item_id', how='left')
+    stores_sales_items = sales_items.merge(stores, on='store_id', how='left')
     return stores_sales_items
 
 def opsd_germany_data():

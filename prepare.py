@@ -26,8 +26,13 @@ def prep_heb_data(df):
     df['month'] = df.index.strftime('%m-%b')
     # add weekday column
     df['weekday'] = df.index.strftime('%w-%a')
-    # add sales_total column
-    df['sales_total'] = df.sale_amount * df.item_price
+    # rename sale_amount to items_sold
+    df = df.rename(columns=({'sale_amount': 'items_sold'}))
+    # add dollars_sold column
+    df['dollars_sold'] = df.items_sold * df.item_price
+    # drop leap days
+    df = df[~((df.index.month == 2) & (df.index.day == 29))]
+
     
     return df
 
@@ -49,3 +54,19 @@ def prep_opsd_germany_data(df):
     df['wind_solar'] = df.wind + df.solar
 
     return df
+
+def train_validate_test_split(df, train_size=.5, validate_size=.3):
+    '''
+    split data by proportion for time series modeling
+    - takes in df
+    - returns train, validate, test df's
+    '''
+    train_end = int(len(df) * train_size)
+    validate_end = train_end + int(len(df) * validate_size)
+
+    train = df[:train_end]
+    validate = df[train_end:validate_end]
+    test = df[validate_end:]
+    
+    return train, validate, test
+
