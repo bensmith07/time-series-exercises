@@ -184,3 +184,10 @@ def opsd_germany_data():
     df.to_csv(filename, index=False)
     
     return df
+
+def get_combined_store_data():
+    sales = sales_data()
+    items = items_data()
+    stores = stores_data()
+    df = combine_heb_data(sales, items, stores)
+    return df

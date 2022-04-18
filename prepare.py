@@ -4,12 +4,14 @@ prepare functions for the codeup timeseries exercises
 
 import pandas as pd
 
-def prep_heb_data(df):
+def prep_store_data(df):
     '''
     Takes in the df of combined items, sales, and stores info.
     - Converts index to datetime formatted sale date
     - adds columns for month and day of the week
-    - adds a sales total column (sale_amount * item_price)
+    - rename sale amount to items_sold
+    - adds a dollars_sold column (items_sold * item_price)
+    - resample daiy (original is daily, but there are multiple records per day)
     '''
     # if no time of day information is stored (i.e. all times == 00:00:00)
     if df.sale_date.str.endswith(' 00:00:00 GMT').mean() == 1:
@@ -30,6 +32,8 @@ def prep_heb_data(df):
     df = df.rename(columns=({'sale_amount': 'items_sold'}))
     # add dollars_sold column
     df['dollars_sold'] = df.items_sold * df.item_price
+    # resample daily 
+    df = df.resample('D').sum()
     # drop leap days
     df = df[~((df.index.month == 2) & (df.index.day == 29))]
 
@@ -69,4 +73,11 @@ def train_validate_test_split(df, train_size=.5, validate_size=.3):
     test = df[validate_end:]
     
     return train, validate, test
+
+def get_combined_store_data():
+    sales = sales_data()
+    items = items_data()
+    stores = stores_data()
+    df = combine_heb_data(sales, items, stores)
+    return df
 
